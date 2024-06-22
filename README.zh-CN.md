@@ -9,6 +9,7 @@ _✨ 在 Nuxt 中使用 CSS 级联层 ✨_
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 
+[English](./README.md) | **简体中文**
 
 ## 特性
 

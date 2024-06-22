@@ -9,6 +9,7 @@ _✨ Use css cascade layers in Nuxt ✨_
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 
+**English** | [简体中文](./README.zh-CN.md)
 
 ## Features
 
