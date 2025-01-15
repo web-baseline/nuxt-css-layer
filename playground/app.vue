@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-root">
     Nuxt module playground!
     <ElCard>
       <ElButton>Test</ElButton>
@@ -10,8 +10,10 @@
 <script setup>
 </script>
 
-<style layer="app">
-.div {
-  background: #000;
+<style scoped layer="app">
+@charset "UTF-8";
+
+.app-root {
+  background-color: var(--el-bg-color-page);
 }
 </style>

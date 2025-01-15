@@ -20,4 +20,5 @@ export default defineNuxtConfig({
     cssLayerOrder: ['element-plus', 'app'],
   },
   devtools: { enabled: true },
+  compatibilityDate: '2025-01-15',
 });

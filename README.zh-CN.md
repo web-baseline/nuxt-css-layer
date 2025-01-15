@@ -13,8 +13,8 @@ _✨ 在 Nuxt 中使用 CSS 级联层 ✨_
 
 ## 特性
 
-- 为 CSS 文件添加级联层（使用 [@web-baseline/postcss-wrap-up-layer](https://github.com/web-baseline/postcss-wrap-up-layer)）
-- 允许 Vue SFC 的 `<style>` 块设置 CSS 级联层 （使用 [@web-baseline/vite-plugin-vue-style-layer](https://github.com/web-baseline/postcss-wrap-up-layer/blob/main/README.zh-CN.md)）
+- 为 CSS 文件添加级联层（使用 [@web-baseline/postcss-wrap-up-layer](https://github.com/web-baseline/postcss-wrap-up-layer/blob/main/README.zh-CN.md)）
+- 允许 Vue SFC 的 `<style>` 块设置 CSS 级联层 （使用 [@web-baseline/vite-plugin-vue-style-layer](https://github.com/web-baseline/vite-plugin-vue-style-layer)）
 - CSS 级联层排序
 
 ## 快速开始
