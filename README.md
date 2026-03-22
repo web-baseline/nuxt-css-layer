@@ -15,9 +15,10 @@ _✨ Use css cascade layers in Nuxt ✨_
 
 ## Features
 
-- Add cascading layers to CSS files ( By [@web-baseline/postcss-wrap-up-layer](https://github.com/web-baseline/postcss-wrap-up-layer) )
-- Allow adding cascading layer to style blocks in Vue SFC ( By [@web-baseline/vite-plugin-vue-style-layer](https://github.com/web-baseline/vite-plugin-vue-style-layer) )
-- CSS cascading layer sorting
+- Add layer names to imported CSS files via `?layer=` query
+	- In Vue SFC, `<style layer="...">` is handled through the corresponding `?layer=` style request query
+- Add layer names to matched CSS files with rule-based mapping
+- Sort cascade layers globally via server-side injected `@layer` order
 
 ## Quick Setup
 
@@ -29,16 +30,94 @@ npx nuxi module add @web-baseline/nuxt-css-layer
 
 That's it! You can now use css cascade layers in your Nuxt app ✨
 
+## Usage
+
+### 1) Configure the module
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+	modules: ['@web-baseline/nuxt-css-layer'],
+	cssLayer: {
+		rules: [
+			{
+				includes: /^node_modules\/element-plus/,
+				layerName: 'element-plus',
+			},
+		],
+		cssLayerOrder: ['base', 'element-plus', 'app'],
+	},
+})
+```
+
+### 2) Add layer by import query
+
+```ts
+// app.vue / any entry file
+import './theme.css?layer=base'
+```
+
+### 3) Add layer in Vue SFC style block
+
+```vue
+<style scoped layer="app">
+.app-root {
+	color: red;
+}
+</style>
+```
+
+With default `importQuery: true`, this module reads `layer` query from SFC style requests, so using the `layer` attribute in `<style>` works directly.
+
+### Known issue (SFC `layer` without value)
+
+When using `<style layer>` in SFC (without an explicit layer name), Vite style request id generation converts it to `layer=true`.
+
+Because query parsing cannot distinguish boolean and string in this case, a layer named `true` will be generated.
+
+If you need an anonymous layer, set the layer name to a single space:
+
+```vue
+<style layer=" ">
+/* anonymous layer */
+</style>
+```
+
+### 4) Optional: enforce global layer order
+
+When `cssLayerOrder` is provided, this module injects the following into SSR `<head>`:
+
+```css
+@layer base, element-plus, app;
+```
+
+This ensures deterministic cascade order across your app and third-party styles.
+
 
 ### Options
 
 | Option             | Description                                                                                                      | Type                              | Default     |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------- | --------------------------------- | ----------- |
-| sfc                | Is SFC processing enabled                                                                                        | `boolean`                         | `true`      |
-| sfcIncludes        | SFC files (refer to [`@web-baseline/vite-plugin-vue-style-layer`](https://github.com/web-baseline/vite-plugin-vue-style-layer/tree/main?tab=readme-ov-file#options))                            | --                                | --          |
-| rules              | CSS file rules (refer to [`@web-baseline/postcss-wrap-up-layer`](https://github.com/web-baseline/postcss-wrap-up-layer?tab=readme-ov-file#options-type))                          | --                                | --          |
-| ignoreOnlyComments | Ignore files that only contain comments (refer to [`@web-baseline/postcss-wrap-up-layer`](https://github.com/web-baseline/postcss-wrap-up-layer?tab=readme-ov-file#options-type)) | --                                | --          |
+| importQuery        | Enable `?layer=` query parsing (controls both normal CSS imports and SFC `<style layer="...">` processing)   | `boolean`                         | `true`      |
+| rules              | Rule-based CSS mapping to layer names (from [`@web-baseline/postcss-wrap-up-layer`](https://github.com/web-baseline/postcss-wrap-up-layer#options-type)) | `PostcssWrapUpLayerOptions['rules']` | `[]`    |
+| ignoreOnlyComments | Ignore files that only contain comments (forwarded to `postcss-wrap-up-layer`)                                 | `boolean \| undefined`           | `undefined` |
 | cssLayerOrder      | Cascade layer sorting                                                                                            | `string \| string[] \| undefined` | `undefined` |
+
+## How it works
+
+- `importQuery` adds a PostCSS plugin that reads `layer` from import query, for example `a.css?layer=base`.
+- SFC `<style layer="...">` follows the same `?layer=` query parsing path, so it is also controlled by the `importQuery` switch.
+- `rules` adds another PostCSS plugin instance for path-based mapping.
+- `cssLayerOrder` creates a Nitro server plugin to inject `@layer ...;` into SSR HTML head.
+
+## Development
+
+```bash
+pnpm dev          # run playground
+pnpm lint         # eslint
+pnpm test         # unit + e2e tests
+pnpm build        # full build pipeline
+```
 
 
 
