@@ -14,17 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Support `?layer=` import query parsing via unified PostCSS path.
-- Add module tests to verify plugin registration and configuration.
+- Add module test suite and GitHub Actions test workflow.
+- Add coverage script and Vitest coverage configuration.
 
 ### Changed
 - Refactor module options from `sfc`/`sfcIncludes` to `importQuery`.
 - Upgrade project dependencies.
+- Harden CI settings (Node.js matrix, frozen lockfile install, and coverage test command).
 
 ### Deprecated
 - Deprecate `@web-baseline/vite-plugin-vue-style-layer`.
 
 ### Docs
 - Update documentation with CSS cascade layer usage examples and configuration notes.
+- Add Codecov badge in README.
 
 ## [0.2.0] - 2025-01-15
 
