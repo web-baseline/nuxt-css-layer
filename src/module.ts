@@ -49,8 +49,8 @@ export default defineNuxtModule<ModuleOptions>({
 
 export const layers = ${
   Array.isArray(options.cssLayerOrder)
-  ? JSON.stringify(options.cssLayerOrder)
-  : JSON.stringify(options.cssLayerOrder!.split(',').map((layer) => layer.trim()).filter((layer) => layer.length > 0))
+    ? JSON.stringify(options.cssLayerOrder)
+    : JSON.stringify(options.cssLayerOrder!.split(',').map((layer) => layer.trim()).filter((layer) => layer.length > 0))
 };
 
 export default defineNitroPlugin((nitro) => {

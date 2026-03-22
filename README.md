@@ -7,6 +7,8 @@
 
 _✨ Use css cascade layers in Nuxt ✨_
 
+> Compatible with Nuxt 4.
+
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 
 **English** | [简体中文](./README.zh-CN.md)

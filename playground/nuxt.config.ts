@@ -1,6 +1,7 @@
 import { resolve, relative, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+/* eslint-disable nuxt/nuxt-config-keys-order */
 export default defineNuxtConfig({
   modules: [
     '@element-plus/nuxt',
@@ -19,6 +20,5 @@ export default defineNuxtConfig({
     ],
     cssLayerOrder: ['element-plus', 'app'],
   },
-  devtools: { enabled: true },
   compatibilityDate: '2025-01-15',
 });
