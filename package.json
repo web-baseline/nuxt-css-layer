@@ -1,6 +1,6 @@
 {
   "name": "@web-baseline/nuxt-css-layer",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Use css cascade layers in Nuxt",
   "license": "MIT",
   "type": "module",
@@ -30,7 +30,7 @@
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
+    "release": "pnpm build && pnpm publish && git push --follow-tags",
     "build": "pnpm dev:prepare && pnpm lint && pnpm test && pnpm prepack",
     "lint": "eslint .",
     "test": "nuxi prepare test/fixtures/basic && vitest run",
@@ -44,8 +44,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^4.4.2",
-    "@web-baseline/postcss-wrap-up-layer": "^0.2.0",
-    "@web-baseline/vite-plugin-vue-style-layer": "^0.2.0"
+    "@web-baseline/postcss-wrap-up-layer": "^0.3.0"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.9",
@@ -55,7 +54,6 @@
     "@nuxt/test-utils": "^4.0.0",
     "@types/node": "^20.12.11",
     "@vitest/ui": "^4.1.0",
-    "changelogen": "^0.5.5",
     "element-plus": "^2.7.3",
     "eslint": "^9.2.0",
     "nuxt": "^4.4.2",

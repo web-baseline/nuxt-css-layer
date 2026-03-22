@@ -1,13 +1,16 @@
 import { defineNuxtModule, addVitePlugin, addServerPlugin, addTemplate } from '@nuxt/kit';
 import WrapUpLayer, { type PluginOptions as PostcssWrapUpLayerOptions } from '@web-baseline/postcss-wrap-up-layer';
-import VueStyleLayer, { type PluginOptions as VueStyleLayerOptions } from '@web-baseline/vite-plugin-vue-style-layer';
 
 export interface ModuleOptions {
-  sfc: boolean;
-  sfcIncludes?: VueStyleLayerOptions['includes'];
+  importQuery: boolean;
   rules: PostcssWrapUpLayerOptions['rules'];
   ignoreOnlyComments?: PostcssWrapUpLayerOptions['ignoreOnlyComments'];
   cssLayerOrder?: string | string[];
+}
+
+export interface QueryWithLayer {
+  type?: 'script' | 'template' | 'style' | 'custom';
+  layer?: string;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -16,32 +19,50 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'cssLayer',
   },
   defaults: {
-    sfc: true,
+    importQuery: true,
     rules: [],
   },
   setup (options) {
+    const plugins = [] as ReturnType<typeof WrapUpLayer>[];
+
+    if (options.importQuery) {
+      plugins.push(WrapUpLayer({
+        rules: [
+          {
+            map: (relativeId) => {
+              const [, rawQuery] = relativeId.split(`?`, 2) as [string, string?];
+              const query = Object.fromEntries(new URLSearchParams(rawQuery)) as QueryWithLayer;
+              if (typeof query.layer === 'string') {
+                return query.layer;
+              }
+              return false;
+            },
+          },
+        ],
+        ignoreOnlyComments: options.ignoreOnlyComments,
+      }));
+    }
+
     if (options.rules.length > 0) {
+      plugins.push(WrapUpLayer({
+        rules: options.rules,
+        ignoreOnlyComments: options.ignoreOnlyComments,
+      }));
+    }
+
+    if (plugins.length > 0) {
       addVitePlugin({
         name: 'vite-plugin-nuxt-css-layer--postcss',
         config: () => ({
           css: {
             postcss: {
-              plugins: [
-                WrapUpLayer({
-                  rules: options.rules,
-                  ignoreOnlyComments: options.ignoreOnlyComments,
-                }),
-              ],
+              plugins,
             },
           },
         }),
       });
     }
-    if (options.sfc) {
-      addVitePlugin(VueStyleLayer({
-        includes: options.sfcIncludes,
-      }));
-    }
+
     if (options.cssLayerOrder) {
       const plugin = addTemplate({
         filename: 'nuxt-css-layer/css-layers.ts',

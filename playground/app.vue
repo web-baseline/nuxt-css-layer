@@ -8,6 +8,7 @@
 </template>
 
 <script setup>
+import './theme.css?layer=base';
 </script>
 
 <style scoped layer="app">

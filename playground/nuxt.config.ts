@@ -1,6 +1,3 @@
-import { resolve, relative, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 /* eslint-disable nuxt/nuxt-config-keys-order */
 export default defineNuxtConfig({
   modules: [
@@ -8,17 +5,13 @@ export default defineNuxtConfig({
     '../src/module',
   ],
   cssLayer: {
-    sfcIncludes: (path) => {
-      const r = relative(dirname(fileURLToPath(import.meta.url)), resolve(path));
-      return /^(?!node_modules\/)(?!\.nuxt\/)(?!virtual:).*/.test(r);
-    },
     rules: [
       {
         includes: /^node_modules\/element-plus/,
         layerName: 'element-plus',
       },
     ],
-    cssLayerOrder: ['element-plus', 'app'],
+    cssLayerOrder: ['base', 'element-plus', 'app'],
   },
   compatibilityDate: '2025-01-15',
 });
