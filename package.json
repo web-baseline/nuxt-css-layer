@@ -63,5 +63,12 @@
     "vitest": "^4.1.0",
     "vue-tsc": "^2.0.16"
   },
-  "packageManager": "pnpm@10.6.2"
+  "packageManager": "pnpm@10.6.2",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "esbuild",
+      "unrs-resolver"
+    ]
+  }
 }
