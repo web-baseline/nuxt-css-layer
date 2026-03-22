@@ -2,6 +2,7 @@
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![Codecov][codecov-src]][codecov-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
@@ -127,6 +128,9 @@ pnpm build        # full build pipeline
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/@web-baseline/nuxt-css-layer.svg?style=flat&colorA=020420&colorB=00DC82
 [npm-downloads-href]: https://npmjs.com/package/@web-baseline/nuxt-css-layer
+
+[codecov-src]: https://img.shields.io/codecov/c/github/web-baseline/nuxt-css-layer?style=flat&colorA=020420&colorB=00DC82
+[codecov-href]: https://codecov.io/gh/web-baseline/nuxt-css-layer
 
 [license-src]: https://img.shields.io/npm/l/@web-baseline/nuxt-css-layer.svg?style=flat&colorA=020420&colorB=00DC82
 [license-href]: https://npmjs.com/package/@web-baseline/nuxt-css-layer

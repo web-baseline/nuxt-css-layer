@@ -34,6 +34,7 @@
     "build": "pnpm dev:prepare && pnpm lint && pnpm test && pnpm prepack",
     "lint": "eslint .",
     "test": "nuxi prepare test/fixtures/basic && vitest run",
+    "test:coverage": "nuxi prepare test/fixtures/basic && vitest run --coverage",
     "test:watch": "nuxi prepare test/fixtures/basic && vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
@@ -53,6 +54,7 @@
     "@nuxt/schema": "^4.4.2",
     "@nuxt/test-utils": "^4.0.0",
     "@types/node": "^20.12.11",
+    "@vitest/coverage-istanbul": "^4.1.0",
     "@vitest/ui": "^4.1.0",
     "element-plus": "^2.7.3",
     "eslint": "^9.2.0",

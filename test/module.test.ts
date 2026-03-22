@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import module from '../src/module';
 import type { ModuleOptions } from '../src/module';
 
 const {
@@ -26,11 +25,18 @@ vi.mock('@web-baseline/postcss-wrap-up-layer', () => ({
 }));
 
 describe('module setup', () => {
-  const runSetup = (options: ModuleOptions) => {
-    (module as unknown as { setup: (opts: ModuleOptions) => void }).setup(options);
+  const loadModule = async () => {
+    const loaded = await import('../src/module');
+    return loaded.default as unknown as { setup: (opts: ModuleOptions) => void };
+  };
+
+  const runSetup = async (options: ModuleOptions) => {
+    const module = await loadModule();
+    module.setup(options);
   };
 
   beforeEach(() => {
+    vi.resetModules();
     addVitePlugin.mockReset();
     addServerPlugin.mockReset();
     addTemplate.mockReset();
@@ -38,8 +44,8 @@ describe('module setup', () => {
     wrapUpLayer.mockImplementation((options) => ({ name: 'mock-wrap-up-layer', options }));
   });
 
-  it('should register importQuery plugin and resolve layer from query', () => {
-    runSetup({
+  it('should register importQuery plugin and resolve layer from query', async () => {
+    await runSetup({
       importQuery: true,
       rules: [],
     });
@@ -50,6 +56,7 @@ describe('module setup', () => {
     };
 
     expect(importQueryOptions.rules[0]?.map('/foo.css?layer=app')).toBe('app');
+    expect(importQueryOptions.rules[0]?.map('/foo.css')).toBe(false);
     expect(importQueryOptions.rules[0]?.map('/foo.css?type=style')).toBe(false);
 
     expect(addVitePlugin).toHaveBeenCalledTimes(1);
@@ -57,10 +64,10 @@ describe('module setup', () => {
     expect(vitePlugin.config().css.postcss.plugins).toHaveLength(1);
   });
 
-  it('should register rules plugin and pass ignoreOnlyComments', () => {
+  it('should register rules plugin and pass ignoreOnlyComments', async () => {
     const rules = [{ includes: /node_modules/, layerName: 'vendor' }];
 
-    runSetup({
+    await runSetup({
       importQuery: false,
       rules,
       ignoreOnlyComments: true,
@@ -72,12 +79,13 @@ describe('module setup', () => {
       ignoreOnlyComments: true,
     });
     expect(addVitePlugin).toHaveBeenCalledTimes(1);
+    expect(addTemplate).not.toHaveBeenCalled();
   });
 
-  it('should register both plugins when importQuery and rules are enabled', () => {
+  it('should register both plugins when importQuery and rules are enabled', async () => {
     const rules = [{ includes: /foo/, layerName: 'foo' }];
 
-    runSetup({
+    await runSetup({
       importQuery: true,
       rules,
     });
@@ -89,20 +97,22 @@ describe('module setup', () => {
     expect(vitePlugin.config().css.postcss.plugins).toHaveLength(2);
   });
 
-  it('should not register vite plugin when no postcss plugins are enabled', () => {
-    runSetup({
+  it('should not register vite plugin when no postcss plugins are enabled', async () => {
+    await runSetup({
       importQuery: false,
       rules: [],
     });
 
     expect(wrapUpLayer).not.toHaveBeenCalled();
     expect(addVitePlugin).not.toHaveBeenCalled();
+    expect(addTemplate).not.toHaveBeenCalled();
+    expect(addServerPlugin).not.toHaveBeenCalled();
   });
 
-  it('should generate server plugin template from cssLayerOrder string', () => {
+  it('should generate server plugin template from cssLayerOrder string', async () => {
     addTemplate.mockReturnValue({ dst: '/virtual/nuxt-css-layer/css-layers.ts' });
 
-    runSetup({
+    await runSetup({
       importQuery: false,
       rules: [],
       cssLayerOrder: 'base, element-plus, app, ',
@@ -117,10 +127,10 @@ describe('module setup', () => {
     expect(addServerPlugin).toHaveBeenCalledWith('/virtual/nuxt-css-layer/css-layers.ts');
   });
 
-  it('should keep array order when cssLayerOrder is array', () => {
+  it('should keep array order when cssLayerOrder is array', async () => {
     addTemplate.mockReturnValue({ dst: '/virtual/nuxt-css-layer/css-layers.ts' });
 
-    runSetup({
+    await runSetup({
       importQuery: false,
       rules: [],
       cssLayerOrder: ['a', 'b'],
@@ -128,5 +138,16 @@ describe('module setup', () => {
 
     const templateOptions = addTemplate.mock.calls[0]?.[0] as { getContents: () => string };
     expect(templateOptions.getContents()).toContain('export const layers = ["a","b"]');
+  });
+
+  it('should not register server plugin when cssLayerOrder is empty string', async () => {
+    await runSetup({
+      importQuery: false,
+      rules: [],
+      cssLayerOrder: '',
+    });
+
+    expect(addTemplate).not.toHaveBeenCalled();
+    expect(addServerPlugin).not.toHaveBeenCalled();
   });
 });
